@@ -1,0 +1,46 @@
+##### overdamped dynamics of a sphere (with dipole attached to it) in 3D#####
+
+variable        rng string uniform
+variable        seed string 198098
+variable        temp string 293.0
+variable        gamma_t string 0.01
+variable        params string ${rng}_${temp}_${gamma_t}
+
+units           real
+atom_style      sphere
+dimension       3
+newton off
+
+lattice         sc 10
+region          box block -20000 20000 -20000 20000 -20000 20000
+create_box      1 box
+create_atoms    1 random 10000 482793 box
+set            type * density 2.65
+set            type * diameter 2500
+#set             type  * dipole/random ${seed} 1250.0
+velocity        all create 1.0 1 loop geom
+
+neighbor        1.0 bin
+neigh_modify    every 1 delay 1 check yes
+
+pair_style none
+
+fix 1 all brownian ${temp} ${seed} rng ${rng} gamma_t ${gamma_t}
+
+#initialisation for the main run
+
+# MSD
+compute         msd  all msd
+
+thermo_style    custom step ke pe c_msd[*]
+
+#dump            1 all custom 1000 dump_${params}_3d.lammpstrj id type &
+#                x y z xu yu zu mux muy muz fx fy fz
+#dump_modify     1 first yes sort id
+dump mydmp all atom 100 dump.lammpstrj
+
+timestep        1000
+thermo          10000
+
+# main run
+run             300000
