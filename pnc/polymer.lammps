@@ -6,7 +6,7 @@ read_data polymer.txt   # Polymer definition
 #create_atoms 3 random 10 1337 NULL
 
 #Potentials
-neighbor 3 bin
+neighbor 1.9 bin
 neigh_modify every 1 delay 1 check yes 
 bond_style harmonic
 bond_coeff 1 29.61 5.29   #50 kT=29.61 kcal/mol
