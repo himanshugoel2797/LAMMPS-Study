@@ -1,0 +1,33 @@
+units real
+atom_style angle        # atoms with bonds and angles
+boundary p p p          # all boundaries are periodic
+
+read_data polymer.txt   # Polymer definition
+
+#Potentials
+neighbor 1.9 bin
+neigh_modify every 1 delay 1 check yes 
+bond_style harmonic
+bond_coeff 1 29.61 1.0   #50 kT=29.61 kcal/mol
+bond_coeff 2 592.2 0.37 #1000 kT=592.2 kcal/mol
+angle_style harmonic
+angle_coeff 1 29.61 90
+
+#WCA Version (cutoff=2^(1/6)*sigma)
+pair_style lj/cut
+pair_coeff 1 1 0.005922 1.0 1.1225 
+pair_coeff 2 2 0.005922 0.3 0.3367
+pair_coeff 1 2 0.005922 0.65 0.7296
+
+#Attactive Version (cutoff=2*sigma)
+#pair_style lj/cut
+#pair_coeff 1 1 0.005922 1.0 2.0 
+#pair_coeff 2 2 0.005922 0.3 0.6
+#pair_coeff 1 2 0.005922 0.65 1.3
+
+#Computations
+
+
+#Equilibrate
+
+#Simulate
