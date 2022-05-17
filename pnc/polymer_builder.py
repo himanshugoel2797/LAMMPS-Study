@@ -106,10 +106,13 @@ def output_polymer(filename='polymer.txt'):
     out_file.close()
 
 i = 0
-for y in range(50):
-    for z in range(50):
+for y in range(15):
+    for z in range(15):
         build_chain(i, chain_pos_y = y * 2, chain_pos_z = z * 2)
         i += 1
 
 #add_nanoparticles(10, i)
+max_x *= 1.2
+max_y *= 1.2
+max_z *= 1.2
 output_polymer()
