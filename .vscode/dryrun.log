@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/hgoel/Documents/LAMMPS'
+make: Leaving directory '/home/hgoel/Documents/LAMMPS'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+

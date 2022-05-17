@@ -1,1 +1,8 @@
 mylammps/**
+*/converted/**
+*/snaps/**
+*/20percent_ver/**
+silica_np/dump.lammpstrj
+silica_np/dump_f1mm_20p.lammpstrj
+silica_np/dump_f.lammpstrj
+poly2vinyl_blob/dump.lammpstrj
