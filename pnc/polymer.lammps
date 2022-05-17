@@ -38,7 +38,8 @@ velocity all create 236.51 1337 #Set the temperature to 236.51 K
 fix 1 all nvt temp 236.51 236.51 100 #use a nose-hoover thermostat to keep the temperature at 236.51 K
 timestep 0.1
 thermo 1000
-run 1000000
+run 100000
+write_data equil.lammps
 
 #Add nanoparticles
 create_atoms 3 random 5 1337 NULL
