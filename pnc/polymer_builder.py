@@ -12,19 +12,32 @@ H_d = 0.3 #d units
 H_dist = 0.37 #d units
 H_mass = 17.007 #g/mol for OH group
 B_mass = 105.14 - H_mass #g/mol for the r est of the monomer
-box_side = 100 #529nm^3
+box_side = 200 #529nm^3
 
 atoms = []
 bonds = []
 angles = []
 dihedrals = []
 
+max_x = 0
+max_y = 0
+max_z = 0
 def build_monomer(chain_idx, monomer_idx, chain_pos_y=0, chain_pos_z=0):
+    global max_x
+    global max_y
+    global max_z
     x_pos = monomer_idx
     b_id = len(atoms)
     h_id = len(atoms) + 1
     atoms.append((b_id, chain_idx, 1, x_pos, chain_pos_y, chain_pos_z))
     atoms.append((h_id, chain_idx, 2, x_pos, chain_pos_y + H_dist, chain_pos_z)) #h bead is 90 degrees from b bead
+
+    if max_x < x_pos:
+        max_x = x_pos
+    if max_y < chain_pos_y:
+        max_y = chain_pos_y
+    if max_z < chain_pos_z:
+        max_z = chain_pos_z
 
     #Bonds
     if monomer_idx > 0: #bond to previous monomer
@@ -60,9 +73,9 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('{} bond types\n'.format(2))
     out_file.write('{} angle types\n'.format(1))
     out_file.write('\n')
-    out_file.write('{} {} xlo xhi\n'.format(0, box_side * one_d))
-    out_file.write('{} {} ylo yhi\n'.format(0, box_side * one_d))
-    out_file.write('{} {} zlo zhi\n'.format(0, box_side * one_d))
+    out_file.write('{} {} xlo xhi\n'.format(0, (max_x + 1) * one_d))
+    out_file.write('{} {} ylo yhi\n'.format(0, (max_y + 1) * one_d))
+    out_file.write('{} {} zlo zhi\n'.format(0, (max_z + 1) * one_d))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Masses\n')
@@ -76,7 +89,7 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('\n')
     box_half = box_side / 2
     for atom_id, chain_idx, atom_type, x_pos, y_pos, z_pos in atoms:
-        out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx + 1, atom_type, (x_pos + box_half) * one_d, (y_pos + box_half) * one_d, (z_pos + box_half) * one_d))
+        out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx + 1, atom_type, (x_pos + 0.5) * one_d, (y_pos + 0.5) * one_d, (z_pos + 0.5) * one_d))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Bonds\n')
@@ -93,8 +106,8 @@ def output_polymer(filename='polymer.txt'):
     out_file.close()
 
 i = 0
-for y in range(10):
-    for z in range(10):
+for y in range(50):
+    for z in range(50):
         build_chain(i, chain_pos_y = y * 2, chain_pos_z = z * 2)
         i += 1
 
