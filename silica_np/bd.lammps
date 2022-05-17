@@ -12,15 +12,15 @@ dimension       3
 newton off
 
 lattice         sc 10
-region          box block -20000 20000 -20000 20000 -20000 20000
+region          box block -20000 20000 -20000 20000 -500000 500000
 create_box      1 box
-create_atoms    1 random 200000 482793 box
+create_atoms    1 random 4950000 482793 box
 set            type * density 2.65
 set            type * diameter 2500
 #set             type  * dipole/random ${seed} 1250.0
 velocity        all create 1.0 1 loop geom
 
-neighbor        100.0 bin
+neighbor        10000.0 bin
 neigh_modify    every 1 delay 1 check yes
 
 pair_style none
@@ -37,10 +37,10 @@ thermo_style    custom step ke pe c_msd[*]
 #dump            1 all custom 1000 dump_${params}_3d.lammpstrj id type &
 #                x y z xu yu zu mux muy muz fx fy fz
 #dump_modify     1 first yes sort id
-dump mydmp all atom 15000 dump.lammpstrj
+dump mydmp all atom 111111 dump.lammpstrj
 
-timestep        100
+timestep        1000000
 thermo          10000
 
 # main run
-run             1500000
+run             21111100 
