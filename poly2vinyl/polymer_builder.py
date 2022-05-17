@@ -12,6 +12,7 @@ H_d = 0.3 #d units
 H_dist = 0.37 #d units
 H_mass = 17.007 #g/mol for OH group
 B_mass = 105.14 - H_mass #g/mol for the r est of the monomer
+box_side = 100
 
 atoms = []
 bonds = []
@@ -19,7 +20,7 @@ angles = []
 dihedrals = []
 
 def build_monomer(chain_idx):
-    x_pos = len(atoms)
+    x_pos = len(atoms) / 2.
     b_id = len(atoms)
     h_id = len(atoms) + 1
     atoms.append((b_id, chain_idx, 1, x_pos, 0, 0))
@@ -52,9 +53,9 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('{} bond types\n'.format(2))
     out_file.write('{} angle types\n'.format(1))
     out_file.write('\n')
-    out_file.write('{} {} xlo xhi\n'.format(0, (chain_length + 1) * one_d))
-    out_file.write('{} {} ylo yhi\n'.format(0, 2 * (H_dist + H_d) * one_d))
-    out_file.write('{} {} zlo zhi\n'.format(0, 1 * one_d))
+    out_file.write('{} {} xlo xhi\n'.format(0, box_side * one_d))
+    out_file.write('{} {} ylo yhi\n'.format(0, box_side * one_d))
+    out_file.write('{} {} zlo zhi\n'.format(0, box_side * one_d))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Masses\n')
@@ -65,20 +66,21 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('\n')
     out_file.write('Atoms\n')
     out_file.write('\n')
+    box_half = box_side / 2
     for atom_id, chain_idx, atom_type, x_pos, y_pos, z_pos in atoms:
-        out_file.write('{} {} {} {} {} {}\n'.format(atom_id, chain_idx, atom_type, x_pos * one_d, y_pos * one_d, z_pos * one_d))
+        out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx + 1, atom_type, (x_pos + box_half) * one_d, (y_pos + box_half) * one_d, (z_pos + box_half) * one_d))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Bonds\n')
     out_file.write('\n')
     for bond_id, bond_type, atom_id_1, atom_id_2 in bonds:
-        out_file.write('{} {} {} {}\n'.format(bond_id, bond_type, atom_id_1, atom_id_2))
+        out_file.write('{} {} {} {}\n'.format(bond_id + 1, bond_type, atom_id_1 + 1, atom_id_2 + 1))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Angles\n')
     out_file.write('\n')
     for angle_id, angle_type, atom_id_1, atom_id_2, atom_id_3 in angles:
-        out_file.write('{} {} {} {} {}\n'.format(angle_id, angle_type, atom_id_1, atom_id_2, atom_id_3))
+        out_file.write('{} {} {} {} {}\n'.format(angle_id + 1, angle_type, atom_id_1 + 1, atom_id_2 + 1, atom_id_3 + 1))
     out_file.write('\n')
     out_file.close()
 
