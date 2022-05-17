@@ -1,0 +1,52 @@
+LAMMPS (24 Mar 2022)
+units real
+atom_style angle        # atoms with bonds and angles
+boundary p p p          # all boundaries are periodic
+
+read_data polymer.txt   # Polymer definition
+Reading data file ...
+  orthogonal box = (0 0 0) to (529 529 529)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  72 atoms
+  scanning bonds ...
+  2 = max bonds/atom
+  scanning angles ...
+  1 = max angles/atom
+  reading bonds ...
+  71 bonds
+  reading angles ...
+  35 angles
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0       
+  special bond factors coul:  0        0        0       
+     3 = max # of 1-2 neighbors
+     4 = max # of 1-3 neighbors
+     8 = max # of 1-4 neighbors
+    11 = max # of special neighbors
+  special bonds CPU = 0.000 seconds
+  read_data CPU = 0.002 seconds
+
+#Potentials
+neighbor 1.9 bin
+neigh_modify every 1 delay 1 check yes
+bond_style harmonic
+bond_coeff 1 29.61 5.29   #50 kT=29.61 kcal/mol
+bond_coeff 2 592.2 1.9573 #1000 kT=592.2 kcal/mol
+angle_style harmonic
+angle_coeff 1 29.61 90
+
+#WCA Version (cutoff=2^(1/6)*sigma)
+pair_style lj/cut 5.29
+pair_coeff 1 1 0.005922 5.29 5.938
+pair_coeff 2 2 0.005922 1.587 1.781
+pair_coeff 1 2 0.005922 3.4385 3.86
+
+#Attactive Version (cutoff=2*sigma)
+#pair_style lj/cut
+#pair_coeff 1 1 0.005922 1.0 2.0
+#pair_coeff 2 2 0.005922 0.3 0.6
+#pair_coeff 1 2 0.005922 0.65 1.3
+
+#Output
+log polymer.log

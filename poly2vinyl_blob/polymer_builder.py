@@ -85,8 +85,8 @@ def output_polymer(filename='polymer.txt'):
     out_file.close()
 
 i = 0
-for y in range(1):
-    for z in range(1):
+for y in range(10):
+    for z in range(10):
         build_chain(i, chain_pos_y = y * 2, chain_pos_z = z * 2)
         i += 1
 output_polymer()
