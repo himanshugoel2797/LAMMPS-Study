@@ -1,4 +1,6 @@
-LAMMPS (24 Mar 2022)
+LAMMPS (4 May 2022)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
 units real
 atom_style angle        # atoms with bonds and angles
 boundary p p p          # all boundaries are periodic
@@ -6,7 +8,7 @@ boundary p p p          # all boundaries are periodic
 read_data polymer.txt   # Polymer definition
 Reading data file ...
   orthogonal box = (0 0 0) to (529 529 529)
-  1 by 1 by 1 MPI processor grid
+  4 by 4 by 8 MPI processor grid
   reading atoms ...
   4800 atoms
   scanning bonds ...
@@ -24,8 +26,8 @@ Finding 1-2 1-3 1-4 neighbors ...
      4 = max # of 1-3 neighbors
      8 = max # of 1-4 neighbors
     11 = max # of special neighbors
-  special bonds CPU = 0.001 seconds
-  read_data CPU = 0.017 seconds
+  special bonds CPU = 0.078 seconds
+  read_data CPU = 0.234 seconds
 
 #Potentials
 neighbor 1.9 bin

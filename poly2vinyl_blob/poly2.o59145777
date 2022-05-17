@@ -1,11 +1,28 @@
-dump mydmp all atom 15000 dump.lammpstrj
-
-#Equilibrate (all WCA)
-velocity all create 236.51 1337 #Set the temperature to 236.51 K
-fix 1 all nvt temp 236.51 236.51 100 #use a nose-hoover thermostat to keep the temperature at 236.51 K
-timestep 0.1
-thermo 1000
-run 10000000
+LAMMPS (4 May 2022)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
+Reading data file ...
+  orthogonal box = (0 0 0) to (529 529 529)
+  4 by 4 by 8 MPI processor grid
+  reading atoms ...
+  4800 atoms
+  scanning bonds ...
+  2 = max bonds/atom
+  scanning angles ...
+  1 = max angles/atom
+  reading bonds ...
+  4700 bonds
+  reading angles ...
+  2300 angles
+Finding 1-2 1-3 1-4 neighbors ...
+  special bond factors lj:    0        0        0       
+  special bond factors coul:  0        0        0       
+     3 = max # of 1-2 neighbors
+     4 = max # of 1-3 neighbors
+     8 = max # of 1-4 neighbors
+    11 = max # of special neighbors
+  special bonds CPU = 0.078 seconds
+  read_data CPU = 0.234 seconds
 Generated 0 of 1 mixed pair_coeff terms from geometric mixing rule
 Neighbor list info ...
   update every 1 steps, delay 1 steps, check yes
@@ -19,6 +36,10 @@ Neighbor list info ...
       pair build: half/bin/newton
       stencil: half/bin/3d
       bin: standard
+Setting up Verlet run ...
+  Unit style    : real
+  Current step  : 0
+  Time step     : 0.1
 WARNING: Communication cutoff 7.837999999999999 is shorter than a bond length based estimate of 9.835. This may lead to errors. (src/comm.cpp:727)
 Per MPI rank memory allocation (min/avg/max) = 5.853 | 5.879 | 7.256 Mbytes
    Step          Temp          E_pair         E_mol          TotEng         Press     
@@ -10051,8 +10072,4 @@ Ave neighs/atom = 0.2925
 Ave special neighs/atom = 8.4583333
 Neighbor list builds = 17706
 Dangerous builds = 0
-
-#Equilibrate (with attractive potentials)
-
-#Simulate (langevin dynamics)
 Total wall time: 0:14:29
