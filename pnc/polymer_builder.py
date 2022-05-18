@@ -13,7 +13,7 @@ import numpy as np
 chain_length = 86 # corresponds to 9kg/mol
 chain_surface_density = 0.05
 box_side = 500 #529nm^3
-NP_count = 10
+NP_count = 1
 NP_rad_nm = 9.1 #nm
 
 one_d = 1#5.29 # Angstrom
@@ -42,7 +42,9 @@ bonds = []
 angles = []
 dihedrals = []
 
-def sample_spherical(samples=1000):
+def sample_spherical(samples):
+    if samples == 1:
+        return np.array([[0, 0, 0]])
 
     points = []
     phi = math.pi * (3. - math.sqrt(5.))  # golden angle in radians
@@ -153,14 +155,15 @@ def output_polymer(filename='polymer.txt'):
 
 pos_set = sample_spherical(NP_count)
 min_dist = math.inf
-for i in range(NP_count):
-    for j in range(i+1, NP_count):
-        dist = np.linalg.norm(pos_set[i] - pos_set[j])
-        if dist < min_dist:
-            min_dist = dist
-#scale pos_set such that min_dist is NP_rad
-for i in range(NP_count):
-    pos_set[i] = pos_set[i] * 2 * (NP_rad + B_rad * 2 * chain_length) / min_dist
+if NP_count > 1:
+    for i in range(NP_count):
+        for j in range(i+1, NP_count):
+            dist = np.linalg.norm(pos_set[i] - pos_set[j])
+            if dist < min_dist:
+                min_dist = dist
+    #scale pos_set such that min_dist is NP_rad
+    for i in range(NP_count):
+        pos_set[i] = pos_set[i] * 2 * (NP_rad + B_rad * 2 * chain_length) / min_dist
 box_side = np.max(pos_set) + (NP_rad + B_rad * 2 * chain_length)
 
 for i in range(NP_count):
