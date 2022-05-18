@@ -48,7 +48,10 @@ def build_monomer(chain_idx, monomer_idx, origin, direction):
     b_pos = origin + direction * monomer_idx
     h_pos = b_pos + perpendicular_vector(direction) * H_dist
 
-    atoms.append((b_id, chain_idx, 1, b_pos))
+    if monomer_idx == 0:
+        atoms.append((b_id, chain_idx, 4, b_pos))
+    else:
+        atoms.append((b_id, chain_idx, 1, b_pos))
     atoms.append((h_id, chain_idx, 2, h_pos)) #h bead is 90 degrees from b bead
 
     if max_x < b_pos[0]:
@@ -98,7 +101,7 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('{} angles\n'.format(len(angles)))
     out_file.write('\n')
     out_file.write('\n')
-    out_file.write('{} atom types\n'.format(3))
+    out_file.write('{} atom types\n'.format(4))
     out_file.write('{} bond types\n'.format(3))
     out_file.write('{} angle types\n'.format(1))
     out_file.write('\n')
@@ -112,6 +115,7 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('1 {}\n'.format(B_mass))
     out_file.write('2 {}\n'.format(H_mass))
     out_file.write('3 {}\n'.format(60.06))
+    out_file.write('4 {}\n'.format(B_mass))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Atoms\n')
