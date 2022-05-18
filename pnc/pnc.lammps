@@ -38,8 +38,8 @@ pair_coeff 2 3 0.1 20 ${pot_3} #H-NP
 
 pair_coeff 3 3 0.1 20 ${pot_3} #NP-NP
 
-neigh_modify exclude type 2 3
-neigh_modify exclude type 1 3
+#neigh_modify exclude type 2 3
+#neigh_modify exclude type 1 3
 
 velocity all create 1 1337 #Set the temperature to 236.51 K
 fix 1 all nvt temp 1 1 10 #use a nose-hoover thermostat to keep the temperature at 236.51 K
