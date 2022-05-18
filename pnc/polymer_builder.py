@@ -3,31 +3,61 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+#Generates a polymer nanocomposite of poly(2-vinylpyridine) with a nanoparticle of SiO2
+
 import os
 import sys
+import math
 import numpy as np
 
 chain_length = 86 # corresponds to 9kg/mol
+chain_surface_density = 0.3
+box_side = 500 #529nm^3
+NP_count = 10
+NP_rad_nm = 9.1 #nm
+
 one_d = 1#5.29 # Angstrom
-H_d = 0.3 #d units
+H_rad = 0.3 #d units
+B_rad = 1 #d units
 H_dist = 0.37 #d units
-H_mass = 17.007 #g/mol for OH group
-B_mass = 105.14 - H_mass #g/mol for the r est of the monomer
-box_side = 200 #529nm^3
+H_mass = 0.001
+B_mass = 1 - H_mass #B-beads are treated as center of mass of the monomer
+
+NP_rad = NP_rad_nm * 10 / 5.29 #d units
+NP_volume = (4/3) * np.pi * NP_rad**3
+NP_surface_area = np.pi * NP_rad**2
+NP_density = 0.01949
+NP_mass = NP_density * NP_volume
+chain_surface_count = int(NP_surface_area * chain_surface_density)
+
+print ("Nanoparticle count:", NP_count)
+print ("Chains per nanoparticle:", chain_surface_count)
+res = input("Generate? (y/n)")
+if res.capitalize() != "Y":
+    sys.exit()
 
 atoms = []
 bonds = []
 angles = []
 dihedrals = []
 
-max_x = 0
-max_y = 0
-max_z = 0
+def sample_spherical(samples=1000):
 
-def sample_spherical(npoints, ndim=3):
-    vec = np.random.randn(npoints, ndim)
-    vec /= np.linalg.norm(vec, axis=1, keepdims=True)
-    return vec
+    points = []
+    phi = math.pi * (3. - math.sqrt(5.))  # golden angle in radians
+
+    for i in range(samples):
+        y = 1 - (i / float(samples - 1)) * 2  # y goes from 1 to -1
+        radius = math.sqrt(1 - y * y)  # radius at y
+
+        theta = phi * i  # golden angle increment
+
+        x = math.cos(theta) * radius
+        z = math.sin(theta) * radius
+
+        points.append(np.array([x, y, z]))
+
+    return np.array(points)
 
 def perpendicular_vector(v):
     if v[1] == 0 and v[2] == 0:
@@ -38,9 +68,6 @@ def perpendicular_vector(v):
     return np.cross(v, [1, 0, 0])
 
 def build_monomer(chain_idx, monomer_idx, origin, direction):
-    global max_x
-    global max_y
-    global max_z
     b_id = len(atoms)
     h_id = len(atoms) + 1
 
@@ -53,20 +80,6 @@ def build_monomer(chain_idx, monomer_idx, origin, direction):
     else:
         atoms.append((b_id, chain_idx, 1, b_pos))
     atoms.append((h_id, chain_idx, 2, h_pos)) #h bead is 90 degrees from b bead
-
-    if max_x < b_pos[0]:
-        max_x = b_pos[0]
-    if max_y < b_pos[1]:
-        max_y = b_pos[1]
-    if max_z < b_pos[2]:
-        max_z = b_pos[2]
-
-    if max_x < h_pos[0]:
-        max_x = h_pos[0]
-    if max_y < h_pos[1]:
-        max_y = h_pos[1]
-    if max_z < h_pos[2]:
-        max_z = h_pos[2]
         
     #Bonds
     if monomer_idx > 0: #bond to previous monomer
@@ -85,10 +98,10 @@ def add_nanoparticle(pos, rad, chain_cnt, chain_len, chain_idx):
     np_idx = len(atoms)
     atoms.append((np_idx, chain_idx, 3, pos))
     
-    origins = sample_spherical(chain_cnt, 3)
+    origins = sample_spherical(chain_cnt)
     for i in range(chain_cnt):
         bonds.append((len(bonds), 3, np_idx, len(atoms)))
-        build_chain(chain_idx, chain_len, pos + origins[i] * rad, origins[i])
+        build_chain(chain_idx, np.random.randint(1, chain_len+1), pos + origins[i] * rad, origins[i])
 
 
 def output_polymer(filename='polymer.txt'):
@@ -105,16 +118,16 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('{} bond types\n'.format(3))
     out_file.write('{} angle types\n'.format(1))
     out_file.write('\n')
-    out_file.write('{} {} xlo xhi\n'.format(-200, 200))
-    out_file.write('{} {} ylo yhi\n'.format(-200, 200))
-    out_file.write('{} {} zlo zhi\n'.format(-200, 200))
+    out_file.write('{} {} xlo xhi\n'.format(-box_side, box_side))
+    out_file.write('{} {} ylo yhi\n'.format(-box_side, box_side))
+    out_file.write('{} {} zlo zhi\n'.format(-box_side, box_side))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Masses\n')
     out_file.write('\n')
     out_file.write('1 {}\n'.format(B_mass))
     out_file.write('2 {}\n'.format(H_mass))
-    out_file.write('3 {}\n'.format(60.06))
+    out_file.write('3 {}\n'.format(NP_mass))
     out_file.write('4 {}\n'.format(B_mass))
     out_file.write('\n')
     out_file.write('\n')
@@ -122,7 +135,7 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('\n')
     box_half = box_side / 2
     for atom_id, chain_idx, atom_type, pos in atoms:
-        out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx + 1, atom_type, (pos[0] + 0.5) * one_d, (pos[1] + 0.5) * one_d, (pos[2] + 0.5) * one_d))
+        out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx + 1, atom_type, pos[0] * one_d, pos[1] * one_d, pos[2] * one_d))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Bonds\n')
@@ -138,16 +151,20 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('\n')
     out_file.close()
 
-i = 0
-for y in range(1):
-    for z in range(1):
-        n = np.array([1, 0, 0])#np.random.randn(3)
-        add_nanoparticle(np.array([0,0,0]), 20, 20, 24, i)
-        #build_chain(i, 24, np.array([0,0,0]), n / np.linalg.norm(n, axis=0))
-        i += 1
+pos_set = sample_spherical(NP_count)
+min_dist = math.inf
+for i in range(NP_count):
+    for j in range(i+1, NP_count):
+        dist = np.linalg.norm(pos_set[i] - pos_set[j])
+        if dist < min_dist:
+            min_dist = dist
+#scale pos_set such that min_dist is NP_rad
+for i in range(NP_count):
+    pos_set[i] = pos_set[i] * 2 * (NP_rad + B_rad * chain_length) / min_dist
+box_side = np.max(pos_set) + (NP_rad + B_rad * chain_length)
 
-#add_nanoparticles(10, i)
-max_x *= 10
-max_y *= 10
-max_z *= 10
+for i in range(NP_count):
+    pos = pos_set[i]
+    add_nanoparticle(pos, NP_rad, chain_surface_count, chain_length, i)
+
 output_polymer()

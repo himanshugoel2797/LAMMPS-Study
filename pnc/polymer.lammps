@@ -6,7 +6,7 @@ read_data polymer.txt   # Polymer definition
 #create_atoms 3 random 10 1337 NULL
 
 #Potentials
-neighbor 1.9 bin
+neighbor 2 bin
 neigh_modify every 1 delay 1 check yes 
 bond_style harmonic
 angle_style harmonic

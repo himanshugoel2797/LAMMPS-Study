@@ -8,7 +8,7 @@ angle_style harmonic
 read_data equil.lammps
 
 #Potentials
-neighbor 1.9 bin
+neighbor 2 bin
 neigh_modify every 1 delay 1 check yes 
 
 bond_coeff 1 50 1   #50 kT=29.61 kcal/mol
