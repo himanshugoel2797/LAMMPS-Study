@@ -11,6 +11,7 @@ neigh_modify every 1 delay 1 check yes
 bond_style harmonic
 bond_coeff 1 29.61 5.29   #50 kT=29.61 kcal/mol
 bond_coeff 2 592.2 1.9573 #1000 kT=592.2 kcal/mol
+bond_coeff 3 5922 59.22 #1000 kT=592.2 kcal/mol
 angle_style harmonic
 angle_coeff 1 29.61 90
 
@@ -31,23 +32,12 @@ pair_coeff 3 3 0.005922 100 112.25
 
 #Output
 log polymer.log
-dump mydmp all atom 15000 dump.lammpstrj
+dump mydmp all atom 10000 dump.lammpstrj
 
 #Equilibrate (all WCA)
 velocity all create 236.51 1337 #Set the temperature to 236.51 K
 fix 1 all nvt temp 236.51 236.51 100 #use a nose-hoover thermostat to keep the temperature at 236.51 K
-timestep 0.1
-thermo 1000
-run 100000
-write_data equil.lammps
-
-#Add nanoparticles
-create_atoms 3 random 5 1337 NULL
-dump mydmp all atom 15000 dump_pnc.lammpstrj
-timestep 0.1
+timestep 1
 thermo 1000
 run 1000000
-
-#Equilibrate (with attractive potentials)
-
-#Simulate (langevin dynamics)
+write_data equil.lammps

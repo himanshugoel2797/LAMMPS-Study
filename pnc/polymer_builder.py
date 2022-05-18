@@ -5,6 +5,7 @@
 
 import os
 import sys
+import numpy as np
 
 chain_length = 86 # corresponds to 9kg/mol
 one_d = 5.29 # Angstrom
@@ -22,23 +23,48 @@ dihedrals = []
 max_x = 0
 max_y = 0
 max_z = 0
-def build_monomer(chain_idx, monomer_idx, chain_pos_y=0, chain_pos_z=0):
+
+def sample_spherical(npoints, ndim=3):
+    vec = np.random.randn(npoints, ndim)
+    vec /= np.linalg.norm(vec, axis=1, keepdims=True)
+    return vec
+
+def perpendicular_vector(v):
+    if v[1] == 0 and v[2] == 0:
+        if v[0] == 0:
+            raise ValueError('zero vector')
+        else:
+            return np.cross(v, [0, 1, 0])
+    return np.cross(v, [1, 0, 0])
+
+def build_monomer(chain_idx, monomer_idx, origin, direction):
     global max_x
     global max_y
     global max_z
-    x_pos = monomer_idx
     b_id = len(atoms)
     h_id = len(atoms) + 1
-    atoms.append((b_id, chain_idx, 1, x_pos, chain_pos_y, chain_pos_z))
-    atoms.append((h_id, chain_idx, 2, x_pos, chain_pos_y + H_dist, chain_pos_z)) #h bead is 90 degrees from b bead
 
-    if max_x < x_pos:
-        max_x = x_pos
-    if max_y < chain_pos_y:
-        max_y = chain_pos_y
-    if max_z < chain_pos_z:
-        max_z = chain_pos_z
+    #generate random 3d vector using numpy
+    b_pos = origin + direction * monomer_idx
+    h_pos = b_pos + perpendicular_vector(direction) * H_dist
 
+    atoms.append((b_id, chain_idx, 1, b_pos))
+    atoms.append((h_id, chain_idx, 2, h_pos)) #h bead is 90 degrees from b bead
+
+    if max_x < b_pos[0]:
+        max_x = b_pos[0]
+    if max_y < b_pos[1]:
+        max_y = b_pos[1]
+    if max_z < b_pos[2]:
+        max_z = b_pos[2]
+
+    if max_x < h_pos[0]:
+        max_x = h_pos[0]
+    if max_y < h_pos[1]:
+        max_y = h_pos[1]
+    if max_z < h_pos[2]:
+        max_z = h_pos[2]
+        
     #Bonds
     if monomer_idx > 0: #bond to previous monomer
         bonds.append((len(bonds), 1, b_id - 2, b_id))
@@ -48,16 +74,19 @@ def build_monomer(chain_idx, monomer_idx, chain_pos_y=0, chain_pos_z=0):
     if monomer_idx > 0: #angle to previous monomer
         angles.append((len(angles), 1, b_id - 2, b_id, h_id))
 
-def add_nanoparticles(cnt, chain_idx):
-    for i in range(cnt):
-        x_pos = i * (box_side / cnt)
-        y_pos = 0
-        z_pos = 0
-        atoms.append((len(atoms), chain_idx, 3, x_pos, y_pos, z_pos))
+def build_chain(chain_idx, chain_len, origin, direction):
+    for i in range(chain_len):
+        build_monomer(chain_idx, i, origin, direction)
 
-def build_chain(chain_idx, chain_pos_y=0, chain_pos_z=0):
-    for i in range(chain_length):
-        build_monomer(chain_idx, i, chain_pos_y, chain_pos_z)
+def add_nanoparticle(pos, rad, chain_cnt, chain_len, chain_idx):
+    np_idx = len(atoms)
+    atoms.append((np_idx, chain_idx, 3, pos))
+    
+    origins = sample_spherical(chain_cnt, 3)
+    for i in range(chain_cnt):
+        bonds.append((len(bonds), 3, np_idx, len(atoms)))
+        build_chain(chain_idx, chain_len, pos + origins[i] * rad, origins[i])
+
 
 def output_polymer(filename='polymer.txt'):
     #open output file
@@ -70,12 +99,12 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('{} atom types\n'.format(3))
-    out_file.write('{} bond types\n'.format(2))
+    out_file.write('{} bond types\n'.format(3))
     out_file.write('{} angle types\n'.format(1))
     out_file.write('\n')
-    out_file.write('{} {} xlo xhi\n'.format(0, (max_x + 1) * one_d))
-    out_file.write('{} {} ylo yhi\n'.format(0, (max_y + 1) * one_d))
-    out_file.write('{} {} zlo zhi\n'.format(0, (max_z + 1) * one_d))
+    out_file.write('{} {} xlo xhi\n'.format((max_x + 1) * -one_d, (max_x + 1) * one_d))
+    out_file.write('{} {} ylo yhi\n'.format((max_y + 1) * -one_d, (max_y + 1) * one_d))
+    out_file.write('{} {} zlo zhi\n'.format((max_z + 1) * -one_d, (max_z + 1) * one_d))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Masses\n')
@@ -88,8 +117,8 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('Atoms\n')
     out_file.write('\n')
     box_half = box_side / 2
-    for atom_id, chain_idx, atom_type, x_pos, y_pos, z_pos in atoms:
-        out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx + 1, atom_type, (x_pos + 0.5) * one_d, (y_pos + 0.5) * one_d, (z_pos + 0.5) * one_d))
+    for atom_id, chain_idx, atom_type, pos in atoms:
+        out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx + 1, atom_type, (pos[0] + 0.5) * one_d, (pos[1] + 0.5) * one_d, (pos[2] + 0.5) * one_d))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Bonds\n')
@@ -106,13 +135,15 @@ def output_polymer(filename='polymer.txt'):
     out_file.close()
 
 i = 0
-for y in range(15):
-    for z in range(15):
-        build_chain(i, chain_pos_y = y * 2, chain_pos_z = z * 2)
+for y in range(1):
+    for z in range(1):
+        #n = np.random.randn(3)
+        add_nanoparticle(np.array([0,0,0]), 20, 50, 86, i)
+        #build_chain(i, 10, np.array([0,0,0]), n / np.linalg.norm(n, axis=0))
         i += 1
 
 #add_nanoparticles(10, i)
-max_x *= 1.2
-max_y *= 1.2
-max_z *= 1.2
+max_x *= 10
+max_y *= 10
+max_z *= 10
 output_polymer()
