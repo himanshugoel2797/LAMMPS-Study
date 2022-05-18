@@ -11,7 +11,7 @@ import math
 import numpy as np
 
 chain_length = 86 # corresponds to 9kg/mol
-chain_surface_density = 0.3
+chain_surface_density = 0.05
 box_side = 500 #529nm^3
 NP_count = 10
 NP_rad_nm = 9.1 #nm
@@ -101,7 +101,7 @@ def add_nanoparticle(pos, rad, chain_cnt, chain_len, chain_idx):
     origins = sample_spherical(chain_cnt)
     for i in range(chain_cnt):
         bonds.append((len(bonds), 3, np_idx, len(atoms)))
-        build_chain(chain_idx, np.random.randint(1, chain_len+1), pos + origins[i] * rad, origins[i])
+        build_chain(chain_idx, np.random.randint(2, chain_len+1), pos + origins[i] * (rad + 0.5 * B_rad), origins[i])
 
 
 def output_polymer(filename='polymer.txt'):
@@ -133,7 +133,6 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('\n')
     out_file.write('Atoms\n')
     out_file.write('\n')
-    box_half = box_side / 2
     for atom_id, chain_idx, atom_type, pos in atoms:
         out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx + 1, atom_type, pos[0] * one_d, pos[1] * one_d, pos[2] * one_d))
     out_file.write('\n')
