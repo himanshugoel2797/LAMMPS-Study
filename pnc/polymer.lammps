@@ -38,6 +38,8 @@ pair_coeff 3 3 0.1 20 44.89
 log polymer.log
 dump mydmp all atom 10000 dump.lammpstrj
 
+minimize 1e-4 1e-6 100000 100000
+
 #Equilibrate (all WCA)
 velocity all create 1 1337 #Set the temperature to 236.51 K
 fix 1 all nvt temp 1 1 10 #use a nose-hoover thermostat to keep the temperature at 236.51 K
