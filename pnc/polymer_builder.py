@@ -17,8 +17,8 @@ NP_count = 10
 NP_rad_nm = 9.1 #nm
 
 one_d = 1#5.29 # Angstrom
-H_rad = 0.3 #d units
-B_rad = 1 #d units
+H_rad = 0.15 #d units
+B_rad = 0.5 #d units
 H_dist = 0.37 #d units
 H_mass = 0.001
 B_mass = 1 - H_mass #B-beads are treated as center of mass of the monomer
@@ -32,6 +32,7 @@ chain_surface_count = int(NP_surface_area * chain_surface_density)
 
 print ("Nanoparticle count:", NP_count)
 print ("Chains per nanoparticle:", chain_surface_count)
+print ("Nanoparticle size in d:", NP_rad)
 res = input("Generate? (y/n)")
 if res.capitalize() != "Y":
     sys.exit()
@@ -72,7 +73,7 @@ def build_monomer(chain_idx, monomer_idx, origin, direction):
     h_id = len(atoms) + 1
 
     #generate random 3d vector using numpy
-    b_pos = origin + direction * monomer_idx
+    b_pos = origin + direction * 2 * B_rad * monomer_idx
     h_pos = b_pos + perpendicular_vector(direction) * H_dist
 
     if monomer_idx == 0:
@@ -101,7 +102,7 @@ def add_nanoparticle(pos, rad, chain_cnt, chain_len, chain_idx):
     origins = sample_spherical(chain_cnt)
     for i in range(chain_cnt):
         bonds.append((len(bonds), 3, np_idx, len(atoms)))
-        build_chain(chain_idx, np.random.randint(2, chain_len+1), pos + origins[i] * (rad + 0.5 * B_rad), origins[i])
+        build_chain(chain_idx, np.random.randint(2, chain_len+1), pos + origins[i] * (rad + B_rad), origins[i])
 
 
 def output_polymer(filename='polymer.txt'):
@@ -159,8 +160,8 @@ for i in range(NP_count):
             min_dist = dist
 #scale pos_set such that min_dist is NP_rad
 for i in range(NP_count):
-    pos_set[i] = pos_set[i] * 2 * (NP_rad + B_rad * chain_length) / min_dist
-box_side = np.max(pos_set) + (NP_rad + B_rad * chain_length)
+    pos_set[i] = pos_set[i] * 2 * (NP_rad + B_rad * 2 * chain_length) / min_dist
+box_side = np.max(pos_set) + (NP_rad + B_rad * 2 * chain_length)
 
 for i in range(NP_count):
     pos = pos_set[i]
