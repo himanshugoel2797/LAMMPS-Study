@@ -8,7 +8,7 @@ import sys
 import numpy as np
 
 chain_length = 86 # corresponds to 9kg/mol
-one_d = 5.29 # Angstrom
+one_d = 1#5.29 # Angstrom
 H_d = 0.3 #d units
 H_dist = 0.37 #d units
 H_mass = 17.007 #g/mol for OH group
@@ -102,9 +102,9 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('{} bond types\n'.format(3))
     out_file.write('{} angle types\n'.format(1))
     out_file.write('\n')
-    out_file.write('{} {} xlo xhi\n'.format((max_x + 1) * -one_d, (max_x + 1) * one_d))
-    out_file.write('{} {} ylo yhi\n'.format((max_y + 1) * -one_d, (max_y + 1) * one_d))
-    out_file.write('{} {} zlo zhi\n'.format((max_z + 1) * -one_d, (max_z + 1) * one_d))
+    out_file.write('{} {} xlo xhi\n'.format(-50, 50))
+    out_file.write('{} {} ylo yhi\n'.format(-50, 50))
+    out_file.write('{} {} zlo zhi\n'.format(-50, 50))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Masses\n')
@@ -137,9 +137,9 @@ def output_polymer(filename='polymer.txt'):
 i = 0
 for y in range(1):
     for z in range(1):
-        #n = np.random.randn(3)
-        add_nanoparticle(np.array([0,0,0]), 20, 50, 86, i)
-        #build_chain(i, 10, np.array([0,0,0]), n / np.linalg.norm(n, axis=0))
+        n = np.array([1, 0, 0])#np.random.randn(3)
+        add_nanoparticle(np.array([0,0,0]), 20, 20, 24, i)
+        #build_chain(i, 24, np.array([0,0,0]), n / np.linalg.norm(n, axis=0))
         i += 1
 
 #add_nanoparticles(10, i)
