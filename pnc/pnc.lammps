@@ -16,24 +16,28 @@ bond_coeff 2 1000 0.37 #1000 kT=592.2 kcal/mol
 bond_coeff 3 1000 20 #1000 kT=592.2 kcal/mol
 angle_coeff 1 50 90
 
-
 #variable pot_mul equal 2.0^(1.0/6.0) #WCA Version (cutoff=2^(1/6)*sigma)
-variable pot_mul equal 2 #Attractive Version
+variable pot_mult equal 2 #Attractive Version
 
 variable pot_1_1 equal ${pot_mul}*1.0
 variable pot_2_2 equal 2.0^(1.0/6.0)*0.3
 variable pot_1_2 equal 2.0^(1.0/6.0)*0.65
 variable pot_3 equal 2.0^(1.0/6.0)*20
+variable pot_4_4 equal 2.0^(1.0/6.0)*5
 
 pair_coeff 1 1 0.1 1 ${pot_1_1} #B-B
+pair_coeff 1 4 0.1 1 ${pot_1_1} #B-B
+pair_coeff 2 4 0.1 0.65 ${pot_1_2} #H-B (surface)
+pair_coeff 3 4 0.1 20 ${pot_3} #NP-B
+pair_coeff 4 4 0.1 5 ${pot_4_4} #B-B (NP surface)
+
+pair_coeff 1 2 0.1 0.65 ${pot_1_2} #B-H
+pair_coeff 1 3 0.1 20 ${pot_3} #NP-B
+
 pair_coeff 2 2 0.1 0.3 ${pot_2_2} #H-H
 pair_coeff 3 3 0.1 20 ${pot_3} #NP-NP
-pair_coeff 4 4 0.1 1 ${pot_1_1} #B-B
-pair_coeff 1 2 0.1 0.65 ${pot_1_2} #B-H
-pair_coeff 2 4 0.1 0.65 ${pot_1_2} #B-H
 
-#neigh_modify exclude type 2 3
-#neigh_modify exclude type 1 3
+neigh_modify exclude type 2 3
 
 velocity all create 1 1337 #Set the temperature to 236.51 K
 fix 1 all nvt temp 1 1 10 #use a nose-hoover thermostat to keep the temperature at 236.51 K
