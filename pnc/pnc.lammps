@@ -18,7 +18,7 @@ angle_coeff 1 50 90
 
 
 #variable pot_mul equal 2.0^(1.0/6.0) #WCA Version (cutoff=2^(1/6)*sigma)
-variable pot_mult equal 2 #Attractive Version
+variable pot_mul equal 2 #Attractive Version
 
 variable pot_1_1 equal ${pot_mul}*1.0
 variable pot_2_2 equal 2.0^(1.0/6.0)*0.3
