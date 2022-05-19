@@ -13,7 +13,7 @@ import numpy as np
 chain_length = 86 # corresponds to 9kg/mol
 chain_surface_density = 0.05
 box_side = 500 #529nm^3
-NP_count = 1
+NP_count = 10
 NP_rad_nm = 9.1 #nm
 
 one_d = 1#5.29 # Angstrom
