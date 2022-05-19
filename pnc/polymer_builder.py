@@ -41,6 +41,7 @@ atoms = []
 bonds = []
 angles = []
 dihedrals = []
+nanoparticles = []
 
 def sample_spherical(samples):
     if samples == 1:
@@ -81,8 +82,8 @@ def build_monomer(chain_idx, monomer_idx, origin, direction):
     if monomer_idx == 0:
         atoms.append((b_id, chain_idx, 4, b_pos))
     else:
-        atoms.append((b_id, chain_idx, 1, b_pos))
-    atoms.append((h_id, chain_idx, 2, h_pos)) #h bead is 90 degrees from b bead
+        atoms.append((b_id, 0, 1, b_pos))
+    atoms.append((h_id, 0, 2, h_pos)) #h bead is 90 degrees from b bead
         
     #Bonds
     if monomer_idx > 0: #bond to previous monomer
@@ -101,10 +102,15 @@ def add_nanoparticle(pos, rad, chain_cnt, chain_len, chain_idx):
     np_idx = len(atoms)
     atoms.append((np_idx, chain_idx, 3, pos))
     
+    atom_idxs = [np_idx]
+
     origins = sample_spherical(chain_cnt)
     for i in range(chain_cnt):
+        atom_idxs.append(len(atoms))
         bonds.append((len(bonds), 3, np_idx, len(atoms)))
         build_chain(chain_idx, np.random.randint(2, chain_len+1), pos + origins[i] * (rad + B_rad), origins[i])
+
+    nanoparticles.append((len(nanoparticles), chain_idx, atom_idxs))
 
 
 def output_polymer(filename='polymer.txt'):
@@ -137,7 +143,7 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('Atoms\n')
     out_file.write('\n')
     for atom_id, chain_idx, atom_type, pos in atoms:
-        out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx + 1, atom_type, pos[0] * one_d, pos[1] * one_d, pos[2] * one_d))
+        out_file.write('{} {} {} {} {} {}\n'.format(atom_id + 1, chain_idx, atom_type, pos[0] * one_d, pos[1] * one_d, pos[2] * one_d))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Bonds\n')
@@ -152,6 +158,21 @@ def output_polymer(filename='polymer.txt'):
         out_file.write('{} {} {} {} {}\n'.format(angle_id + 1, angle_type, atom_id_1 + 1, atom_id_2 + 1, atom_id_3 + 1))
     out_file.write('\n')
     out_file.close()
+
+def output_def(filename='polymer_def_builder.lammps'):
+    out_file = open(filename, 'w')
+    out_file.write('# Parameters and groups for poly(2-vinyl) chain\n')
+    out_file.write('\n')
+    out_file.write('variable np_rad equal {}\n'.format(NP_rad))
+
+    molecule_ids = ""
+    for _, id, _ in nanoparticles:
+        molecule_ids += str(id) + " "
+    out_file.write('group nanoparticles molecule {}\n'.format(molecule_ids))
+    out_file.write('group polymers molecule 0\n')
+    out_file.close()
+    
+
 
 pos_set = sample_spherical(NP_count)
 min_dist = math.inf
@@ -168,6 +189,7 @@ box_side = np.max(pos_set) + (NP_rad + B_rad * 2 * chain_length)
 
 for i in range(NP_count):
     pos = pos_set[i]
-    add_nanoparticle(pos, NP_rad, chain_surface_count, chain_length, i)
+    add_nanoparticle(pos, NP_rad, chain_surface_count, chain_length, i + 1)
 
 output_polymer()
+output_def()
