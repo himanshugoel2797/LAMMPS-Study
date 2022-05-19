@@ -107,7 +107,7 @@ def add_nanoparticle(pos, rad, chain_cnt, chain_len, chain_idx):
     origins = sample_spherical(chain_cnt)
     for i in range(chain_cnt):
         atom_idxs.append(len(atoms))
-        bonds.append((len(bonds), 3, np_idx, len(atoms)))
+        #bonds.append((len(bonds), 3, np_idx, len(atoms)))
         build_chain(chain_idx, np.random.randint(12, chain_len+1), pos + origins[i] * (rad + B_rad), origins[i])
 
     nanoparticles.append((len(nanoparticles), chain_idx, atom_idxs))

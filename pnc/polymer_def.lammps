@@ -36,3 +36,4 @@ pair_coeff 2 2 0.1 0.3 ${pot_2_2} #H-H
 pair_coeff 3 3 0.1 ${np_rad} ${pot_3} #NP-NP
 
 neigh_modify exclude type 2 3 #H-NP interaction does not matter
+neigh_modify exclude type 3 4 #NP-B(Surface) interaction is fixed

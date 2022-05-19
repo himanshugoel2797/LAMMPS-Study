@@ -24,7 +24,7 @@ minimize 1e-4 1e-6 100000 100000
 #Equilibrate (all WCA)
 velocity all create 1 1337 #Set the temperature to 236.51 K
 fix 1 polymers nvt temp 1 1 10 #use a nose-hoover thermostat to keep the temperature at 236.51 K
-fix 2 nanoparticles rigid/nvt molecule temp 1 1 10
+fix 2 nanoparticles rigid/nvt/small molecule temp 1 1 10
 timestep 0.0001
 thermo 1000
 run 10000000
