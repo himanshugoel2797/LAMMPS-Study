@@ -11,7 +11,7 @@ import math
 import numpy as np
 
 chain_length = 86 # corresponds to 9kg/mol
-chain_surface_density = 0.05
+chain_surface_density = 0.6
 box_side = 500 #529nm^3
 NP_count = 10
 NP_rad_nm = 9.1 #nm
@@ -92,7 +92,7 @@ def build_monomer(chain_idx, monomer_idx, origin, direction):
 
     #Angles
     if monomer_idx > 0: #angle to previous monomer
-        angles.append((len(angles), 1, b_id - 2, b_id, h_id))
+        angles.append((len(angles), 1, h_id - 2, b_id - 2, b_id))
 
 def build_chain(chain_idx, chain_len, origin, direction):
     for i in range(chain_len):
@@ -108,7 +108,7 @@ def add_nanoparticle(pos, rad, chain_cnt, chain_len, chain_idx):
     for i in range(chain_cnt):
         atom_idxs.append(len(atoms))
         bonds.append((len(bonds), 3, np_idx, len(atoms)))
-        build_chain(chain_idx, np.random.randint(2, chain_len+1), pos + origins[i] * (rad + B_rad), origins[i])
+        build_chain(chain_idx, np.random.randint(12, chain_len+1), pos + origins[i] * (rad + B_rad), origins[i])
 
     nanoparticles.append((len(nanoparticles), chain_idx, atom_idxs))
 

@@ -17,7 +17,7 @@ include "polymer_def.lammps"
 
 #Output
 log polymer.log
-dump mydmp all atom 10000 dump.lammpstrj
+dump mydmp all atom 10000 dump_highdensity.lammpstrj
 
 minimize 1e-4 1e-6 100000 100000
 

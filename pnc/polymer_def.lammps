@@ -15,14 +15,16 @@ if "${b_lj_en}" then "jump SELF use_lj" else "jump SELF use_wca"
 
 label use_wca
 variable pot_1_1 equal ${pot_1_1_wca}
+variable pot_1_1_str equal 0.1
 jump SELF done
 label use_lj
 variable pot_1_1 equal ${pot_1_1_lj}
+variable pot_1_1_str equal 0.7
 
 label done
-pair_coeff 1 1 0.1 1 ${pot_1_1} #B-B 
-pair_coeff 1 4 0.1 1 ${pot_1_1} #B-B
-pair_coeff 4 4 0.1 1 ${pot_1_1} #B-B (NP surface)
+pair_coeff 1 1 ${pot_1_1_str} 1 ${pot_1_1} #B-B 
+pair_coeff 1 4 ${pot_1_1_str} 1 ${pot_1_1} #B-B
+pair_coeff 4 4 ${pot_1_1_str} 1 ${pot_1_1} #B-B (NP surface)
 
 pair_coeff 2 4 0.1 0.65 ${pot_1_2} #H-B (surface)
 pair_coeff 3 4 0.1 ${np_rad} ${pot_3} #NP-B
