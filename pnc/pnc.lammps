@@ -1,4 +1,4 @@
-processors * * * grid numa
+processors * * * grid twolevel 32 * * *
 comm_style tiled
 comm_modify cutoff 28
 units lj
