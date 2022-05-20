@@ -11,7 +11,7 @@ import math
 import numpy as np
 
 chain_length = 86 # corresponds to 9kg/mol
-chain_surface_density = 0.6
+chain_surface_density = 0.3
 box_side = 500 #529nm^3
 NP_count = 10
 NP_rad_nm = 9.1 #nm

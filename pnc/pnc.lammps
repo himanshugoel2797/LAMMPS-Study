@@ -1,3 +1,6 @@
+processors * * * grid numa
+comm_style tiled
+comm_modify cutoff 28
 units lj
 atom_style angle        # atoms with bonds and angles
 boundary p p p          # all boundaries are periodic
@@ -17,6 +20,7 @@ include "polymer_def.lammps"
 velocity all create 1 1337 #Set the temperature to 236.51 K
 fix 1 polymers nvt temp 1 1 10 #use a nose-hoover thermostat to keep the temperature at 236.51 K
 fix 2 nanoparticles rigid/nvt/small molecule temp 1 1 10
+fix 3 all balance 1000000 1.1 rcb
 
 #Add nanoparticles
 #create_atoms 3 random 5 1337 NULL
