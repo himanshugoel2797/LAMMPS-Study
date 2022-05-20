@@ -13,7 +13,7 @@ import numpy as np
 chain_length = 86 # corresponds to 9kg/mol
 chain_surface_density = 0.2
 box_side = 500 #529nm^3
-NP_count = 10
+NP_count = 8
 NP_rad_nm = 9.1 #nm
 
 one_d = 1#5.29 # Angstrom
@@ -42,6 +42,22 @@ bonds = []
 angles = []
 dihedrals = []
 nanoparticles = []
+
+min_pos = np.zeros(3)
+max_pos = np.zeros(3)
+
+def sample_cube(samples):
+    side = int(math.ceil(samples ** (1./3.)))
+
+    points = []
+    for z in range(side):
+        for y in range(side):
+            for x in range(side):
+                if len(points) < samples:
+                    points.append(np.array([x/side, y/side, z/side]))
+                else:
+                    return points
+    return points
 
 def sample_spherical(samples):
     if samples == 1:
@@ -72,12 +88,19 @@ def perpendicular_vector(v):
     return np.cross(v, [1, 0, 0])
 
 def build_monomer(chain_idx, monomer_idx, origin, direction):
+    global min_pos
+    global max_pos
+
     b_id = len(atoms)
     h_id = len(atoms) + 1
 
     #generate random 3d vector using numpy
     b_pos = origin + direction * 2 * B_rad * monomer_idx
     h_pos = b_pos + perpendicular_vector(direction) * H_dist
+
+    for i in range(3):
+        min_pos[i] = min([min_pos[i], b_pos[i], h_pos[i]])
+        max_pos[i] = max([max_pos[i], b_pos[i], h_pos[i]])
 
     if monomer_idx == 0:
         atoms.append((b_id, chain_idx, 4, b_pos))
@@ -127,9 +150,9 @@ def output_polymer(filename='polymer.txt'):
     out_file.write('{} bond types\n'.format(3))
     out_file.write('{} angle types\n'.format(1))
     out_file.write('\n')
-    out_file.write('{} {} xlo xhi\n'.format(-box_side, box_side))
-    out_file.write('{} {} ylo yhi\n'.format(-box_side, box_side))
-    out_file.write('{} {} zlo zhi\n'.format(-box_side, box_side))
+    out_file.write('{} {} xlo xhi\n'.format(min_pos[0] - 5, max_pos[0] + 5))
+    out_file.write('{} {} ylo yhi\n'.format(min_pos[1] - 5, max_pos[1] + 5))
+    out_file.write('{} {} zlo zhi\n'.format(min_pos[2] - 5, max_pos[2] + 5))
     out_file.write('\n')
     out_file.write('\n')
     out_file.write('Masses\n')
@@ -174,7 +197,7 @@ def output_def(filename='polymer_def_builder.lammps'):
     
 
 
-pos_set = sample_spherical(NP_count)
+pos_set = sample_cube(NP_count)
 min_dist = math.inf
 if NP_count > 1:
     for i in range(NP_count):
