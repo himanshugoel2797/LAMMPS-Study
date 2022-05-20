@@ -1,5 +1,5 @@
 processors * * * grid twolevel 32 * * *
-comm_style tiled
+#comm_style tiled
 comm_modify cutoff 28
 units lj
 atom_style angle        # atoms with bonds and angles
@@ -9,7 +9,7 @@ read_data polymer.txt   # Polymer definition
 #create_atoms 3 random 10 1337 NULL
 
 #Potentials
-neighbor 2 bin
+neighbor 0.3 multi
 neigh_modify every 1 delay 1 check yes 
 bond_style harmonic
 angle_style harmonic
@@ -28,7 +28,7 @@ minimize 1e-4 1e-6 100000 100000
 velocity all create 1 1337 #Set the temperature to 236.51 K
 fix 1 polymers nvt temp 1 1 10 #use a nose-hoover thermostat to keep the temperature at 236.51 K
 fix 2 nanoparticles rigid/nvt/small molecule temp 1 1 10
-fix 3 all balance 1000000 1.1 rcb
+fix 3 all balance 1000000 1.1 shift xyz 20 1.05
 timestep 0.0001
 thermo 1000
 run 10000000
