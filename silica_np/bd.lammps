@@ -1,4 +1,5 @@
 ##### overdamped dynamics of a sphere (with dipole attached to it) in 3D#####
+processors * * * grid twolevel 32 * * *
 
 variable        rng string uniform
 variable        seed string 198098
@@ -12,7 +13,7 @@ dimension       3
 newton off
 
 lattice         sc 10
-region          box block -20000 20000 -20000 20000 -500000 500000
+region          box block -20000 20000 -20000 20000 -100000 100000
 create_box      1 box
 create_atoms    1 random 4950000 482793 box
 set            type * density 2.65

@@ -1,5 +1,5 @@
 processors * * * grid twolevel 32 * * *
-newton off
+newton on
 #comm_style tiled
 comm_modify cutoff 40
 units lj
@@ -29,7 +29,7 @@ balance 1.1 shift xyz 10 1.05
 velocity all create 1 1337 #Set the temperature to 236.51 K
 fix 1 polymers nvt temp 1 1 10 #use a nose-hoover thermostat to keep the temperature at 236.51 K
 fix 2 nanoparticles rigid/nvt/small molecule temp 1 1 10
-fix 3 all balance 1000000 1.1 shift xyz 10 1.05
+#fix 3 all balance 1000000 1.1 shift xyz 10 1.05
 timestep 0.0001
 thermo 1000
 run 10000000
