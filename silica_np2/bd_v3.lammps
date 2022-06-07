@@ -3,20 +3,20 @@
 variable        rng string uniform
 variable        seed string 198098
 variable        temp string 293.0
-variable        gamma_t string 0.01
+variable        gamma_t string 2.3562e-9 #kg/s
 variable        params string ${rng}_${temp}_${gamma_t}
 
-units           real
+units           si
 atom_style      sphere
 dimension       3
 newton off
 
 #lattice         sc 10
-region          box block -200000 200000 -200000 200000 -200000 200000
+region          box block -20e-6 20e-6 -20e-6 20e-6 -20e-6 20e-6
 create_box      1 box
-create_atoms    1 random REPLACE_ME 1337 box
-set            type * density 2.65
-set            type * diameter 2500
+create_atoms    1 random 156455 1337 box
+set            type * density 2270
+set            type * diameter 250e-9
 #set             type  * dipole/random ${seed} 1250.0
 velocity        all create 1.0 1 loop geom
 
@@ -49,10 +49,10 @@ thermo_style    custom step ke pe c_msd[4]
 #dump            1 all custom 1000 dump_${params}_3d.lammpstrj id type &
 #                x y z xu yu zu mux muy muz fx fy fz
 #dump_modify     1 first yes sort id
-dump mydmp all atom 11111 dump_CONCENT.lammpstrj
+dump mydmp all atom 100 dump_156455.lammpstrj
 
-timestep        10000000
-thermo          100000
+timestep        1e-6
+thermo          1000
 
 # main run
-run             1222222
+run             11000

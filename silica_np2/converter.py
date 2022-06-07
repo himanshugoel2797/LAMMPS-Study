@@ -65,4 +65,4 @@ out_dir = 'converted_{}'.format(concent)
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
-convert_file('concent_{}/dump_{}.lammpstrj'.format(concent, concent), out_dir + '/smp_{}.dat', [125.e-9], 20.e-6)
+convert_file('dump_156455.lammpstrj'.format(concent, concent), out_dir + '/smp_{}.dat', [125.e-9], 1)
