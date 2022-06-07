@@ -14,7 +14,7 @@ newton off
 #lattice         sc 10
 region          box block -20e-6 20e-6 -20e-6 20e-6 -20e-6 20e-6
 create_box      1 box
-create_atoms    1 random 156455 1337 box
+create_atoms    1 random REPLACE_ME 1337 box
 set            type * density 2270
 set            type * diameter 250e-9
 #set             type  * dipole/random ${seed} 1250.0
@@ -49,7 +49,7 @@ thermo_style    custom step ke pe c_msd[4]
 #dump            1 all custom 1000 dump_${params}_3d.lammpstrj id type &
 #                x y z xu yu zu mux muy muz fx fy fz
 #dump_modify     1 first yes sort id
-dump mydmp all atom 100 dump_156455.lammpstrj
+dump mydmp all atom 100 dump_CONCENT.lammpstrj
 
 timestep        1e-6
 thermo          1000
