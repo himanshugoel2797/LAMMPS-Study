@@ -1,0 +1,48 @@
+#processors * * * grid twolevel 32 * * *
+#comm_style tiled
+#comm_modify cutoff 28
+units real
+atom_style sphere        # atoms with bonds and angles
+comm_modify mode single vel yes
+boundary p p p          # all boundaries are periodic
+
+
+variable atom_density equal 2.65
+variable atom_diameter equal 2500
+variable atom_radius equal ${atom_diameter}*0.5
+variable atom_count equal 500
+
+# Define the atoms
+
+#Potentials
+#neighbor 1 bin
+#neigh_modify every 1 delay 1 check yes 
+
+#pair_style lubricate 0.01 0 0 2250 3000 0 0
+#pair_coeff * *
+#pair_style granular
+#pair_coeff * * hooke 1e-4 0 tangential linear_history 7e-5 0 0.1
+pair_style lj/cut ${atom_radius}
+pair_modify shift yes
+#variable pot_1_1 equal 2.0^(1.0/6.0)*${atom_radius}
+#pair_coeff 1 1 1 ${atom_radius} ${pot_1_1}
+
+read_data equil.lammps
+#set type * density ${atom_density}
+#set type * diameter ${atom_diameter}
+#velocity all create 293.0 1337 #Set the temperature to room temperature
+
+compute msd all msd
+thermo_style custom step ke pe c_msd[*]
+thermo 1000
+dump mydmp all atom 100000 dump_final.lammpstrj
+timestep 100
+
+fix 1 all nve/sphere
+#fix 2 all viscous 2.4e-5
+fix 2 all langevin 293.0 293.0 100.0 1337
+
+run 1000000
+
+#timestep 1000000
+#run 21111100
