@@ -97,7 +97,7 @@ def generate_updated_file(concent=0.02):
     os.chdir('..')
     return particle_count
 
-concents = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
+concents = [0.02, 0.2]
 for idx, i in enumerate(concents):
     particle_cnt = generate_updated_file(i)
     print('{}/{} [{} particles]'.format(idx, len(concents), particle_cnt))
@@ -105,11 +105,3 @@ for idx, i in enumerate(concents):
         # Wait for 30 minutes
         print('Waiting for 30 minutes')
         os.system('sleep 30m')
-
-for idx, concent in enumerate(concents):
-    out_dir = 'converted_{}'.format(concent)
-    #Make directory for converted files
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
-
-    convert_file('concent_{}/dump_{}.lammpstrj'.format(concent, concent), out_dir + '/smp_{}.dat', [125.e-9], 20.e-6)
