@@ -4,8 +4,8 @@ import os
 import sys
 import numpy as np
 
-src_file = 'bd_v3_nocollisions.lammps'
-dest_dir = 'concent_{}'
+src_file = 'bd_v3_collisions.lammps'
+dest_dir = 'concent_col_{}'
 dest_file_path = '{}/bd.lammps'
 
 vol = 400000. * 400000. * 400000.
