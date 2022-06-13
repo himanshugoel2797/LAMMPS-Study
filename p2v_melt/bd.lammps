@@ -16,9 +16,9 @@ read_data generator/pnc_def.lammps
 #set            type 2 diameter 1e-9
 #velocity        all create 1.0 1 loop geom
 
-neighbor        1e-8 bin
-neigh_modify one 100000 page 1000000
-#neigh_modify    every 1 delay 1 check yes
+neighbor        1e-9 multi
+#neigh_modify one 100000 page 1000000
+neigh_modify    every 1 delay 1 check yes
 bond_style harmonic
 bond_coeff 1 0.2057 1e-9   #50 kT=29.61 kcal/mol
 
@@ -44,9 +44,9 @@ compute         msd  all msd
 
 thermo_style    custom step ke pe c_msd[4]
 
-dump mydmp all atom 10000 dump_0.02.lammpstrj
+dump mydmp all atom 10000 dump.lammpstrj
 
-timestep        1e-10
+timestep        1e-9
 thermo          10000
 
 # main run
