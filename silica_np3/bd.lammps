@@ -1,0 +1,61 @@
+##### overdamped dynamics of a sphere (with dipole attached to it) in 3D#####
+
+variable        rng string uniform
+variable        seed string 198098
+variable        temp string 297.15
+variable        gamma_t string 2.14578632e-9 #kg/s
+variable        params string ${rng}_${temp}_${gamma_t}
+
+units           si
+atom_style      sphere
+dimension       3
+newton off
+
+#lattice         sc 10
+#region          box block -5e-6 5e-6 -5e-6 5e-6 -5e-6 5e-6
+#lattice         sc 10
+#create_box      1 box
+read_data grid.lammps
+#create_atoms    1 region 3056 1337 box
+set            type * density 2650
+set            type * diameter 250e-9
+#set             type  * dipole/random ${seed} 1250.0
+velocity        all create 1.0 1 loop geom
+
+neighbor        2e-6 bin
+#neigh_modify    every 1 delay 1 check yes
+
+variable atom_density equal 2.65
+variable atom_diameter equal 250e-9
+variable atom_radius equal ${atom_diameter}*0.5
+variable atom_count equal 160
+
+pair_style lj/cut ${atom_radius}
+pair_modify shift yes
+variable pot_1_1 equal 2.0^(1.0/6.0)*${atom_radius}
+pair_coeff 1 1 1e-20 ${atom_radius} ${pot_1_1}
+#pair_style none
+
+minimize 1.0e-8 1.0e-8 100000 1000000
+reset_timestep 0
+
+fix 1 all brownian ${temp} ${seed} rng ${rng} gamma_t ${gamma_t}
+
+#initialisation for the main run
+
+# MSD
+compute         msd  all msd
+
+thermo_style    custom step ke pe c_msd[4]
+
+#dump            1 all custom 1000 dump_${params}_3d.lammpstrj id type &
+#                x y z xu yu zu mux muy muz fx fy fz
+#dump_modify     1 first yes sort id
+dump mydmp all atom 100 dump_0.02.lammpstrj
+
+timestep        1e-6
+thermo          100
+
+# main run
+run             52000
+

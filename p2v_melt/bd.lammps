@@ -1,0 +1,53 @@
+variable        rng string uniform
+variable        seed string 198098
+variable        temp string 297.15
+variable        gamma_t string 2.14578632e-9 #kg/s
+variable        params string ${rng}_${temp}_${gamma_t}
+
+units           si
+atom_style      angle
+dimension       3
+newton off
+
+read_data generator/pnc_def.lammps
+#set            type 1 density 2650
+#set            type 1 diameter 18e-9
+#set            type 2 density 1511
+#set            type 2 diameter 1e-9
+#velocity        all create 1.0 1 loop geom
+
+neighbor        1e-8 bin
+neigh_modify one 100000 page 1000000
+#neigh_modify    every 1 delay 1 check yes
+bond_style harmonic
+bond_coeff 1 0.2057 1e-9   #50 kT=29.61 kcal/mol
+
+variable atom_diameter equal 18e-9
+variable atom_radius equal ${atom_diameter}*0.5
+
+variable bead_diameter equal 1e-9
+variable bead_radius equal ${bead_diameter}*0.5
+
+pair_style lj/cut ${atom_radius}
+pair_modify shift yes
+variable pot_1_1 equal 2.0^(1.0/6.0)*${atom_radius}
+variable pot_2_2 equal 2.0^(1.0/6.0)*${bead_radius}
+pair_coeff 1 1 1e-20 ${atom_radius} ${pot_1_1}
+pair_coeff 2 2 1e-20 ${bead_radius} ${pot_2_2}
+
+minimize 1.0e-8 1.0e-8 100000 1000000
+reset_timestep 0
+
+fix 1 all brownian ${temp} ${seed} rng ${rng} gamma_t ${gamma_t}
+
+compute         msd  all msd
+
+thermo_style    custom step ke pe c_msd[4]
+
+dump mydmp all atom 10000 dump_0.02.lammpstrj
+
+timestep        1e-10
+thermo          10000
+
+# main run
+run             2000000
