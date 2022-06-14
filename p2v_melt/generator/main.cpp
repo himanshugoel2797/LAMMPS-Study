@@ -16,20 +16,20 @@
 
 const int grid_side = 100;
 const int grid_size = grid_side * grid_side * grid_side;
-const int sparsity = 10;
+const int sparsity = 6;
 
-const float grid_scale = 1.e-9; // each voxel is 0.5nm
+const float grid_scale = 1;//1.e-9; // each voxel is 0.5nm
 
-const int NP_COUNT = 10;
-const float NP_RADIUS_UNSCALED = 9.0e-9;
+const int NP_COUNT = 500;
+const float NP_RADIUS_UNSCALED = 2;//9.0e-9;
 const float NP_RADIUS = NP_RADIUS_UNSCALED / grid_scale;
 const char NP_TYPE = 1;
-const double NP_MASS = 2650 * (4.0 / 3.0) * M_PI * pow(NP_RADIUS_UNSCALED, 3);
+const double NP_MASS = 64;//2650 * (4.0 / 3.0) * M_PI * pow(NP_RADIUS_UNSCALED, 3);
 
 const int BEAD_LENGTH_MAX = 86;
-const float BEAD_RADIUS = 0.5e-9 / grid_scale;
+const float BEAD_RADIUS = 0.5f;//0.5e-9 / grid_scale;
 const char BEAD_TYPE = 2;
-const double BEAD_MASS = (0.10514 * 6.02214e-23);
+const double BEAD_MASS = 1;//(0.10514 * 6.02214e-23);
 
 uint8_t grid[grid_side][grid_side][grid_side];
 
@@ -79,8 +79,8 @@ int add_np(int x, int y, int z, std::vector<particle_def_t> &particles, std::vec
         return 0;
     }
 
-    int s = 5;
-    int t = 2;
+    int s = 2;
+    int t = 1;
 
     // Make sure volume is empty
     for (int i = -NP_RADIUS - s; i <= NP_RADIUS + s; i++) {
@@ -224,9 +224,9 @@ int main(){
     if (bonds.size() > 0) fprintf(fp, "%d bond types\n", 1);
     //fprintf(fp, "%d angle types\n", ANGLE_TYPE + 1);
     fprintf(fp, "\n\n");
-    fprintf(fp, "%g %g xlo xhi\n", -5 * grid_scale, (grid_side + 5) * grid_scale);
-    fprintf(fp, "%g %g ylo yhi\n", -5 * grid_scale, (grid_side + 5) * grid_scale);
-    fprintf(fp, "%g %g zlo zhi\n", -5 * grid_scale, (grid_side + 5) * grid_scale);
+    fprintf(fp, "%g %g xlo xhi\n", -0.01 * grid_side * grid_scale, (grid_side * 1.01) * grid_scale);
+    fprintf(fp, "%g %g ylo yhi\n", -0.01 * grid_side * grid_scale, (grid_side * 1.01) * grid_scale);
+    fprintf(fp, "%g %g zlo zhi\n", -0.01 * grid_side * grid_scale, (grid_side * 1.01) * grid_scale);
     fprintf(fp, "\n\n");
     fprintf(fp, "Masses\n");
     fprintf(fp, "\n");
