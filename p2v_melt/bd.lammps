@@ -51,7 +51,7 @@ fix 3 all wall/reflect xlo EDGE xhi EDGE ylo EDGE yhi EDGE zlo EDGE zhi EDGE
 #compute         msd  all msd
 
 thermo_style    custom step temp #ke pe c_msd[4]
-dump mydmp all atom 4000000 dump.lammpstrj
+dump mydmp all atom 400000 dump.lammpstrj
 
 timestep        0.25e-12
 thermo          4000
