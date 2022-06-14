@@ -44,15 +44,15 @@ reset_timestep 0
 velocity all create ${temp} 1337
 
 fix 1 all nvt temp ${temp} ${temp} 1e-10
-fix 2 all balance 40000 1.05 shift xyz 50 1.05
+fix 2 all balance 4000 1.05 shift xyz 50 1.05
 #fix 3 all brownian ${temp} ${seed} rng ${rng} gamma_t ${gamma_t}
 fix 3 all wall/reflect xlo EDGE xhi EDGE ylo EDGE yhi EDGE zlo EDGE zhi EDGE
 
 #compute         msd  all msd
 
 thermo_style    custom step temp #ke pe c_msd[4]
-dump mydmp all atom 10000 dump.lammpstrj
+dump mydmp all atom 4000000 dump.lammpstrj
 
-timestep        0.45e-12
-thermo          10000
-run            10000000
+timestep        0.25e-12
+thermo          4000
+run             400000000
