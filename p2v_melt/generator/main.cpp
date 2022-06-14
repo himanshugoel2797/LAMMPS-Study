@@ -14,13 +14,13 @@
 #include <vector>
 #include <tuple>
 
-const int grid_side = 40;
+const int grid_side = 400;
 const int grid_size = grid_side * grid_side * grid_side;
 const int sparsity = 10;
 
 const float grid_scale = 1.e-9; // each voxel is 0.5nm
 
-const int NP_COUNT = 1;
+const int NP_COUNT = 100;
 const float NP_RADIUS_UNSCALED = 9.0e-9;
 const float NP_RADIUS = NP_RADIUS_UNSCALED / grid_scale;
 const char NP_TYPE = 1;
