@@ -5,7 +5,7 @@ variable        gamma_t string 2.14578632e-9 #kg/s
 variable        params string ${rng}_${temp}_${gamma_t}
 
 units           si
-atom_style      angle
+atom_style      bond
 dimension       3
 newton off
 
@@ -38,16 +38,16 @@ pair_coeff 2 2 1e-20 ${bead_radius} ${pot_2_2}
 minimize 1.0e-8 1.0e-8 100000 1000000
 reset_timestep 0
 
-fix 1 all brownian ${temp} ${seed} rng ${rng} gamma_t ${gamma_t}
+#velocity all create 1.0 1337
+
+#fix 1 all brownian ${temp} ${seed} rng ${rng} gamma_t ${gamma_t}
+fix 1 all nvt temp ${temp} ${temp} 1e-9
 
 compute         msd  all msd
 
-thermo_style    custom step ke pe c_msd[4]
+thermo_style    custom step temp ke pe c_msd[4]
+dump mydmp all atom 1000 dump.lammpstrj
 
-dump mydmp all atom 10000 dump.lammpstrj
-
-timestep        1e-9
-thermo          10000
-
-# main run
-run             2000000
+timestep        0.25e-12
+thermo          100000
+run            1000000
