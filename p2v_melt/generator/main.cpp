@@ -14,13 +14,13 @@
 #include <vector>
 #include <tuple>
 
-const int grid_side = 400;
+const int grid_side = 100;
 const int grid_size = grid_side * grid_side * grid_side;
 const int sparsity = 10;
 
 const float grid_scale = 1.e-9; // each voxel is 0.5nm
 
-const int NP_COUNT = 100;
+const int NP_COUNT = 10;
 const float NP_RADIUS_UNSCALED = 9.0e-9;
 const float NP_RADIUS = NP_RADIUS_UNSCALED / grid_scale;
 const char NP_TYPE = 1;
@@ -29,7 +29,7 @@ const double NP_MASS = 2650 * (4.0 / 3.0) * M_PI * pow(NP_RADIUS_UNSCALED, 3);
 const int BEAD_LENGTH_MAX = 86;
 const float BEAD_RADIUS = 0.5e-9 / grid_scale;
 const char BEAD_TYPE = 2;
-const double BEAD_MASS = (105.14 * 6.02214e-23) * 1e-3;
+const double BEAD_MASS = (0.10514 * 6.02214e-23);
 
 uint8_t grid[grid_side][grid_side][grid_side];
 
@@ -202,10 +202,12 @@ int main(){
         for (int j = 0; j < grid_side; j+=sparsity) {
             for (int k = 0; k < grid_side; k+=sparsity) {
                 if (!grid_get(i, j, k)) {
+                    //if (chain_idx < 300){
                     if (add_free_polymer(i, j, k, chain_idx, particles, bonds, angles))
                         chain_idx++;
                     if (chain_idx % 10000 == 0)
                         printf("Generated chain #%d\n", chain_idx);
+                    //}
                 }
             }
         }
@@ -222,9 +224,9 @@ int main(){
     if (bonds.size() > 0) fprintf(fp, "%d bond types\n", 1);
     //fprintf(fp, "%d angle types\n", ANGLE_TYPE + 1);
     fprintf(fp, "\n\n");
-    fprintf(fp, "%g %g xlo xhi\n", 0., grid_side * grid_scale);
-    fprintf(fp, "%g %g ylo yhi\n", 0., grid_side * grid_scale);
-    fprintf(fp, "%g %g zlo zhi\n", 0., grid_side * grid_scale);
+    fprintf(fp, "%g %g xlo xhi\n", -5 * grid_scale, (grid_side + 5) * grid_scale);
+    fprintf(fp, "%g %g ylo yhi\n", -5 * grid_scale, (grid_side + 5) * grid_scale);
+    fprintf(fp, "%g %g zlo zhi\n", -5 * grid_scale, (grid_side + 5) * grid_scale);
     fprintf(fp, "\n\n");
     fprintf(fp, "Masses\n");
     fprintf(fp, "\n");

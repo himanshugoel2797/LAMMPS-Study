@@ -7,6 +7,7 @@ variable        params string ${rng}_${temp}_${gamma_t}
 units           si
 atom_style      bond
 dimension       3
+boundary s s s
 newton off
 
 read_data generator/pnc_def.lammps
@@ -29,26 +30,29 @@ variable bead_diameter equal 1e-9
 variable bead_radius equal ${bead_diameter}*0.5
 
 pair_style lj/cut ${atom_radius}
+#pair_modify compute no
 #pair_modify shift yes
 variable pot_1_1 equal 2.0^(1.0/6.0)*${atom_radius}
 variable pot_2_2 equal 2.0^(1.0/6.0)*${bead_radius}
-pair_coeff 1 1 1e-20 ${atom_radius} ${pot_1_1}
+pair_coeff 1 1 1e-15 ${atom_radius} ${pot_1_1}
 pair_coeff 2 2 1e-20 ${bead_radius} ${pot_2_2}
+pair_coeff 1 2 1e-20 ${atom_radius} ${pot_1_1}
 
 minimize 1.0e-8 1.0e-8 100000 1000000
 reset_timestep 0
 
-#velocity all create 1.0 1337
+velocity all create ${temp} 1337
 
-#fix 1 all brownian ${temp} ${seed} rng ${rng} gamma_t ${gamma_t}
-fix 1 all nvt temp ${temp} ${temp} 1e-9
+fix 1 all nvt temp ${temp} ${temp} 1e-10
 fix 2 all balance 40000 1.05 shift xyz 50 1.05
+#fix 3 all brownian ${temp} ${seed} rng ${rng} gamma_t ${gamma_t}
+fix 3 all wall/reflect xlo EDGE xhi EDGE ylo EDGE yhi EDGE zlo EDGE zhi EDGE
 
 #compute         msd  all msd
 
 thermo_style    custom step temp #ke pe c_msd[4]
-dump mydmp all atom 40000000 dump.lammpstrj
+dump mydmp all atom 10000 dump.lammpstrj
 
-timestep        0.25e-12
-thermo          100000
-run            1000000
+timestep        0.45e-12
+thermo          10000
+run            10000000
