@@ -9,4 +9,4 @@
 
 module load openmpi 
 
-srun --cpu-bind=cores ~/.local/bin/lmp_custom2 -in bd.lammps -sf opt 
+srun --cpu-bind=cores ~/.local/bin/lmp_custom2 -in bd_nosurf.lammps -sf opt 
