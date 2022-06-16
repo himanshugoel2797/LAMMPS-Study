@@ -15,11 +15,11 @@
 #include <algorithm>
 #include <tuple>
 
-const int grid_side = 100;
+const int grid_side = 50;
 const int grid_size = grid_side * grid_side * grid_side;
 const int sparsity = 1;
 const float surface_chain_prob = 0.4f;
-const bool surface_chains = true;
+const bool surface_chains = !true;
 
 const float grid_scale = 1;//1.e-9; // each voxel is 0.5nm
 
